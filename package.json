@@ -1,0 +1,19 @@
+{
+  "name": "kindredmade-backend",
+  "version": "1.0.0",
+  "description": "Backend for the KindredMade shopping app — signup/login with a JSON-file database, no native modules required",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5"
+  }
+}

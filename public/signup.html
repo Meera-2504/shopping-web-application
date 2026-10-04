@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create an account — KindredMade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EEEAE0;
+    --bg-alt: #E4DFD1;
+    --ink: #23261F;
+    --ink-soft: #5A5D51;
+    --brick: #C1272D;
+    --teal: #3B6E71;
+    --mustard: #E8B54D;
+    --card: #FBF9F4;
+    --line: rgba(35,38,31,0.14);
+    --radius: 4px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2{ font-family:'Fraunces', serif; margin:0; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+
+  .wrap{ min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
+
+  .brand-panel{
+    position:relative; background:var(--ink); color:var(--bg);
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:40px; overflow:hidden;
+  }
+  .brand-panel img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.45;
+  }
+  .brand-panel .content{ position:relative; z-index:1; }
+  .logo{
+    font-family:'Fraunces', serif; font-weight:600; font-size:1.4rem;
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+  }
+  .logo span{ font-style:italic; color:var(--mustard); }
+  .brand-quote{ position:relative; z-index:1; max-width:34ch; }
+  .brand-quote h2{
+    font-size:clamp(1.6rem, 3vw, 2.3rem); line-height:1.15; font-weight:500; font-style:italic;
+  }
+  .brand-quote p{ margin-top:16px; font-size:0.9rem; color:rgba(255,255,255,0.7); }
+  .tag{
+    position:absolute; top:32px; right:32px; z-index:2;
+    background:var(--mustard); color:var(--ink);
+    padding:8px 14px 8px 10px; font-family:'IBM Plex Mono'; font-size:0.72rem;
+    border-radius:2px; transform:rotate(6deg); box-shadow:0 3px 8px rgba(0,0,0,0.25);
+  }
+  .tag::before{
+    content:''; position:absolute; left:-4px; top:50%; width:8px; height:8px;
+    background:var(--ink); border:1px solid var(--mustard); border-radius:50%;
+    transform:translateY(-50%);
+  }
+
+  .form-panel{ display:flex; align-items:center; justify-content:center; padding:40px 24px; }
+  .form-inner{ width:100%; max-width:380px; }
+  .form-inner .eyebrow{
+    font-family:'IBM Plex Mono'; font-size:0.75rem; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--teal); display:block; margin-bottom:12px;
+  }
+  .form-inner h1{ font-size:2rem; font-weight:600; margin-bottom:8px; }
+  .form-inner .sub{ color:var(--ink-soft); font-size:0.92rem; margin-bottom:24px; }
+  .sub a{ text-decoration:underline; text-underline-offset:2px; color:var(--brick); }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:0.82rem; font-weight:500; margin-bottom:6px; }
+  .field input{
+    width:100%; padding:13px 14px; border:1px solid var(--ink);
+    border-radius:var(--radius); background:var(--card); font-family:'Work Sans';
+    font-size:0.95rem; color:var(--ink);
+  }
+  .field input:focus-visible{ outline:2px solid var(--teal); outline-offset:1px; }
+  .field-hint{ font-size:0.78rem; color:var(--ink-soft); margin-top:6px; }
+  .field-error{ display:none; color:var(--brick); font-size:0.78rem; margin-top:6px; }
+  .field.invalid input{ border-color:var(--brick); }
+  .field.invalid .field-error{ display:block; }
+  .field.invalid .field-hint{ display:none; }
+
+  .form-error{
+    display:none; background:rgba(193,39,45,0.1); color:var(--brick);
+    border:1px solid rgba(193,39,45,0.3); border-radius:var(--radius);
+    padding:10px 14px; font-size:0.85rem; margin-bottom:20px;
+  }
+  .form-error.show{ display:block; }
+
+  .btn-primary{
+    width:100%; padding:14px; border-radius:100px; border:1px solid var(--ink);
+    background:var(--ink); color:var(--bg); font-size:0.95rem; font-weight:500;
+    cursor:pointer; transition:transform .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-primary:disabled{ opacity:0.6; cursor:default; transform:none; }
+
+  .signup-line{ text-align:center; margin-top:28px; font-size:0.9rem; color:var(--ink-soft); }
+  .signup-line a{ text-decoration:underline; text-underline-offset:2px; color:var(--brick); }
+
+  #toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--bg); padding:12px 22px; border-radius:100px;
+    font-size:0.9rem; opacity:0; pointer-events:none; transition:all .3s ease; z-index:100;
+  }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:860px){
+    .wrap{ grid-template-columns:1fr; }
+    .brand-panel{ min-height:220px; padding:28px; }
+    .brand-quote{ display:none; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand-panel">
+    <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=1200&q=80" alt="Ceramic mugs on a shelf">
+    <span class="tag">no. 0001</span>
+    <div class="content">
+      <a href="index.html" class="logo">Kindred<span>Made</span></a>
+    </div>
+    <div class="brand-quote">
+      <h2>&ldquo;Join a marketplace built for makers, one order at a time.&rdquo;</h2>
+      <p>Create an account to track orders, save your favorite pieces, and follow the makers you love.</p>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-inner">
+      <span class="eyebrow">Account</span>
+      <h1>Create an account</h1>
+      <p class="sub">Already have one? <a href="login.html">Log in</a></p>
+      <div id="form-error" class="form-error" role="alert"></div>
+
+      <form id="signup-form" novalidate>
+        <div class="field" id="name-field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+          <span class="field-error">Enter your name.</span>
+        </div>
+
+        <div class="field" id="email-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@email.com" required>
+          <span class="field-error">Enter a valid email address.</span>
+        </div>
+
+        <div class="field" id="password-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="At least 6 characters" required minlength="6">
+          <span class="field-hint">Use at least 6 characters.</span>
+          <span class="field-error">Password must be at least 6 characters.</span>
+        </div>
+
+        <button type="submit" class="btn-primary">Create account</button>
+      </form>
+
+      <p class="signup-line">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast">Account created</div>
+
+<script>
+  const form = document.getElementById('signup-form');
+  const nameField = document.getElementById('name-field');
+  const emailField = document.getElementById('email-field');
+  const passwordField = document.getElementById('password-field');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const formError = document.getElementById('form-error');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const toast = document.getElementById('toast');
+  let toastTimer;
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+  function showFormError(msg){
+    formError.textContent = msg;
+    formError.classList.add('show');
+  }
+  function clearFormError(){ formError.classList.remove('show'); }
+
+  function validEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFormError();
+    let valid = true;
+
+    if (!nameInput.value.trim()) {
+      nameField.classList.add('invalid');
+      valid = false;
+    } else {
+      nameField.classList.remove('invalid');
+    }
+
+    if (!validEmail(emailInput.value)) {
+      emailField.classList.add('invalid');
+      valid = false;
+    } else {
+      emailField.classList.remove('invalid');
+    }
+
+    if (passwordInput.value.length < 6) {
+      passwordField.classList.add('invalid');
+      valid = false;
+    } else {
+      passwordField.classList.remove('invalid');
+    }
+
+    if (!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account…';
+
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: nameInput.value.trim(),
+          email: emailInput.value,
+          password: passwordInput.value
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showFormError(data.error || 'Something went wrong. Try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+        return;
+      }
+
+      showToast(`Welcome, ${data.user.name}!`);
+      setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    } catch (err) {
+      showFormError('Could not reach the server. Is it running?');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create account';
+    }
+  });
+</script>
+
+</body>
+</html>
